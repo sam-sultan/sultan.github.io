@@ -1,846 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Zaza – Your Health Diet Telegram Companion</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="Zaza is a Telegram chatbot that helps you manage your diet by logging what you eat and giving you clear stats and reports."
-  />
-  <style>
-    :root {
-      --bg: #0f172a;
-      --bg-light: #111827;
-      --accent: #22c55e;
-      --accent-soft: rgba(34, 197, 94, 0.1);
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --card: #020617;
-      --border: #1f2937;
-      --radius-lg: 18px;
-      --radius-full: 999px;
-      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.75);
-      --shadow-chip: 0 12px 30px rgba(15, 23, 42, 0.8);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #111827 0, #020617 55%);
-      color: var(--text);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .page {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 24px 20px 80px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 16px;
-      background: radial-gradient(circle at 20% 20%, #4ade80, #16a34a 40%, #0f766e);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 20px;
-      color: #ecfeff;
-      box-shadow: 0 12px 32px rgba(34, 197, 94, 0.9);
-    }
-
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .logo-text span:first-child {
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      font-size: 18px;
-    }
-
-    .logo-tagline {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .nav-cta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .nav-cta a.primary-link {
-      padding: 8px 16px;
-      border-radius: var(--radius-full);
-      background: #22c55e;
-      color: #022c22;
-      font-weight: 600;
-      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.6);
-      border: 1px solid rgba(34, 197, 94, 0.9);
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr);
-      gap: 38px;
-      align-items: center;
-    }
-
-    @media (max-width: 860px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .nav-cta {
-        align-self: stretch;
-        justify-content: space-between;
-        width: 100%;
-      }
-    }
-
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px 4px 4px;
-      border-radius: var(--radius-full);
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
-
-    .hero-eyebrow-badge {
-      padding: 2px 9px;
-      border-radius: var(--radius-full);
-      background: var(--accent-soft);
-      color: #bbf7d0;
-      font-weight: 600;
-      font-size: 11px;
-      border: 1px solid rgba(34, 197, 94, 0.5);
-    }
-
-    h1 {
-      font-size: clamp(32px, 4vw, 40px);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 14px;
-    }
-
-    h1 span.accent {
-      background: linear-gradient(to right, #4ade80, #22c55e, #22c55e);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-
-    .hero-subtitle {
-      font-size: 15px;
-      color: var(--muted);
-      max-width: 480px;
-      margin-bottom: 20px;
-    }
-
-    .hero-cta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 11px 18px;
-      border-radius: var(--radius-full);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: transform 0.13s ease, box-shadow 0.13s ease,
-        background 0.13s ease, border-color 0.13s ease;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: #022c22;
-      box-shadow: var(--shadow-soft);
-      border-color: rgba(34, 197, 94, 0.9);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 25px 60px rgba(34, 197, 94, 0.75);
-    }
-
-    .btn-ghost {
-      background: rgba(15, 23, 42, 0.7);
-      border-color: rgba(55, 65, 81, 0.8);
-      color: var(--muted);
-    }
-
-    .btn-ghost:hover {
-      background: rgba(15, 23, 42, 0.95);
-      transform: translateY(-1px);
-    }
-
-    .hero-footnote {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .hero-footnote strong {
-      color: #e5e7eb;
-    }
-
-    .chips-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 18px;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: var(--radius-full);
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      font-size: 11px;
-      color: var(--muted);
-      box-shadow: var(--shadow-chip);
-    }
-
-    .chip-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
-    }
-
-    .chip-icon {
-      font-size: 13px;
-    }
-
-    .hero-visual {
-      border-radius: 24px;
-      border: 1px solid rgba(55, 65, 81, 0.8);
-      background: radial-gradient(circle at top left, #16a34a 0, #020617 48%);
-      padding: 18px 18px 18px 18px;
-      box-shadow: var(--shadow-soft);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-visual-inner {
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 18px;
-      border: 1px solid rgba(55, 65, 81, 0.6);
-      padding: 16px 16px 14px;
-    }
-
-    .phone-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .phone-header span.bot-handle {
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .chat-bubbles {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 12px;
-    }
-
-    .bubble {
-      padding: 8px 10px;
-      border-radius: 14px;
-      max-width: 240px;
-      position: relative;
-    }
-
-    .bubble.user {
-      margin-left: auto;
-      background: #22c55e;
-      color: #022c22;
-      border-bottom-right-radius: 4px;
-    }
-
-    .bubble.bot {
-      background: rgba(17, 24, 39, 0.95);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      border-bottom-left-radius: 4px;
-    }
-
-    .bubble small {
-      display: block;
-      margin-top: 3px;
-      font-size: 10px;
-      opacity: 0.7;
-    }
-
-    .mini-stats-card {
-      margin-top: 14px;
-      border-radius: 14px;
-      padding: 10px 10px 10px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-    }
-
-    .mini-stats-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 11px;
-    }
-
-    .badge-day {
-      padding: 3px 8px;
-      border-radius: var(--radius-full);
-      background: rgba(22, 163, 74, 0.16);
-      border: 1px solid rgba(34, 197, 94, 0.7);
-      color: #bbf7d0;
-      font-weight: 600;
-      font-size: 10px;
-    }
-
-    .mini-bars {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .bar-item span.label {
-      display: block;
-      font-size: 9px;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .bar {
-      width: 100%;
-      height: 32px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .bar-fill {
-      position: absolute;
-      height: 100%;
-      left: 0;
-      top: 0;
-      border-radius: inherit;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-    }
-
-    .bar-fill.carbs {
-      width: 62%;
-    }
-    .bar-fill.protein {
-      width: 78%;
-    }
-    .bar-fill.fats {
-      width: 45%;
-    }
-
-    .mini-stats-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .mini-stats-footer strong {
-      color: #e5e7eb;
-    }
-
-    .floating-pill {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      padding: 6px 10px;
-      border-radius: var(--radius-full);
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(34, 197, 94, 0.8);
-      font-size: 10px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #bbf7d0;
-      box-shadow: 0 12px 30px rgba(34, 197, 94, 0.7);
-    }
-
-    .floating-pill-dot {
-      width: 7px;
-      height: 7px;
-      background: #22c55e;
-      border-radius: 999px;
-      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
-    }
-
-    section.features {
-      margin-top: 60px;
-    }
-
-    section.features h2 {
-      font-size: 22px;
-      margin-bottom: 10px;
-      letter-spacing: -0.02em;
-    }
-
-    section.features > p {
-      font-size: 14px;
-      color: var(--muted);
-      max-width: 520px;
-      margin-bottom: 26px;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    @media (max-width: 860px) {
-      .feature-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .feature-card {
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 16px 16px 14px;
-    }
-
-    .feature-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: var(--radius-full);
-      background: rgba(34, 197, 94, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
-
-    .feature-card h3 {
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
-
-    .feature-card p {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .steps {
-      margin-top: 56px;
-      padding: 18px 18px 16px;
-      border-radius: 20px;
-      background: radial-gradient(circle at top left, #15803d 0, #020617 52%);
-      border: 1px solid rgba(34, 197, 94, 0.3);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .steps-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 10px;
-    }
-
-    .steps-header h2 {
-      font-size: 18px;
-    }
-
-    .steps-header span {
-      font-size: 12px;
-      color: #bbf7d0;
-    }
-
-    @media (max-width: 600px) {
-      .steps-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-
-    .steps-list {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    @media (max-width: 800px) {
-      .steps-list {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .step {
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-size: 13px;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-    }
-
-    .step-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      margin-bottom: 4px;
-      color: var(--muted);
-    }
-
-    .step-number {
-      width: 16px;
-      height: 16px;
-      border-radius: var(--radius-full);
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: #bbf7d0;
-      font-weight: 600;
-    }
-
-    .step strong {
-      color: #e5e7eb;
-    }
-
-    footer {
-      margin-top: 46px;
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      border-top: 1px solid rgba(31, 41, 55, 0.9);
-      padding-top: 14px;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a {
-      text-decoration: none;
-    }
-
-    .footer-links a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Diet Assistant – Telegram Diet Tracker</title>
+
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    margin: 0;
+    background: #f4faf6;
+    color: #2f3d40;
+  }
+
+  header {
+    padding: 28px 20px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 40px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #38c97b, #32b0ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p.subtitle {
+    font-size: 17px;
+    color: #5c7073;
+    margin-top: -4px;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 40px auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: #36bf7f;
+    padding: 14px 26px;
+    color: white;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 18px;
+    text-decoration: none;
+    margin: 22px 0;
+    box-shadow: 0 6px 16px rgba(54,191,127,0.35);
+  }
+  .cta-btn:hover {
+    background: #2eac71;
+  }
+
+  .feature-box {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    margin-top: 20px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  }
+
+  .feature-box h3 {
+    margin-top: 0;
+    color: #27a56b;
+    font-size: 20px;
+  }
+
+  .feature-box p {
+    color: #556a66;
+    font-size: 15px;
+  }
+
+  footer {
+    text-align: center;
+    margin: 40px 0 20px;
+    font-size: 13px;
+    color: #80918f;
+  }
+</style>
 </head>
+
 <body>
-  <div class="page">
-    <header>
-      <div class="logo">
-        <div class="logo-icon">Z</div>
-        <div class="logo-text">
-          <span>Zaza</span>
-          <span class="logo-tagline">Your health diet copilot on Telegram</span>
-        </div>
-      </div>
-      <div class="nav-cta">
-        <span>Works right inside Telegram</span>
-        <a
-          href="https://t.me/YourZazaBot"
-          target="_blank"
-          rel="noopener"
-          class="primary-link"
-        >
-          Open in Telegram
-        </a>
-      </div>
-    </header>
 
-    <main>
-      <section>
-        <div class="hero-eyebrow">
-          <span class="hero-eyebrow-badge">New • Telegram chatbot</span>
-          Smarter food logging without another app.
-        </div>
-        <h1>
-          Meet <span class="accent">Zaza</span>, your diet
-          companion that lives in Telegram.
-        </h1>
-        <p class="hero-subtitle">
-          Log what you eat in seconds and get clear, actionable stats on your
-          diet. No spreadsheets. No calorie math. Just chat with Zaza and get
-          a daily snapshot of how you’re really eating.
-        </p>
+<header>
+  <h1>My Diet Assistant</h1>
+  <p class="subtitle">Track meals and get insights — right inside Telegram</p>
+</header>
 
-        <div class="hero-cta">
-          <a
-            href="https://t.me/YourZazaBot"
-            target="_blank"
-            rel="noopener"
-            class="btn btn-primary"
-          >
-            🚀 Start logging in Telegram
-          </a>
-          <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
-        </div>
+<div class="container">
 
-        <p class="hero-footnote">
-          <strong>Free to try.</strong> No account forms, just message Zaza:
-          “Hey” to begin.
-        </p>
+  <a href="https://t.me/KDietBot" class="cta-btn" target="_blank">Open @KDietBot in Telegram</a>
 
-        <div class="chips-row">
-          <div class="chip">
-            <div class="chip-dot"></div>
-            Under 10 seconds per meal
-          </div>
-          <div class="chip">
-            <span class="chip-icon">📊</span>
-            Daily & weekly stats reports
-          </div>
-          <div class="chip">
-            <span class="chip-icon">🔐</span>
-            Your data stays in Telegram
-          </div>
-        </div>
-      </section>
-
-      <aside class="hero-visual" aria-label="Preview of Zaza chat and stats">
-        <div class="floating-pill">
-          <div class="floating-pill-dot"></div>
-          Live macros overview · Today
-        </div>
-        <div class="hero-visual-inner">
-          <div class="phone-header">
-            <span class="bot-handle">Zaza · Diet Assistant</span>
-            <span>Telegram preview</span>
-          </div>
-          <div class="chat-bubbles">
-            <div class="bubble user">
-              Lunch: grilled chicken salad, olive oil dressing, sparkling water
-              <small>you · 12:42</small>
-            </div>
-            <div class="bubble bot">
-              Got it. Logged as a high-protein, low-carb meal. 🥗
-              <small>Zaza · 12:42</small>
-            </div>
-            <div class="bubble user">
-              Show me my stats for today
-              <small>you · 19:13</small>
-            </div>
-            <div class="bubble bot">
-              Here’s your day so far:
-              <br />
-              • 3 meals, 1 snack<br />
-              • 86g protein · 112g carbs · 54g fats<br />
-              • Trending slightly low on fiber 🌾
-              <small>Zaza · 19:13</small>
-            </div>
-          </div>
-
-          <div class="mini-stats-card">
-            <div class="mini-stats-header">
-              <span>Macro breakdown</span>
-              <span class="badge-day">Today · On track ✅</span>
-            </div>
-            <div class="mini-bars">
-              <div class="bar-item">
-                <span class="label">Carbs</span>
-                <div class="bar">
-                  <div class="bar-fill carbs"></div>
-                </div>
-              </div>
-              <div class="bar-item">
-                <span class="label">Protein</span>
-                <div class="bar">
-                  <div class="bar-fill protein"></div>
-                </div>
-              </div>
-              <div class="bar-item">
-                <span class="label">Fats</span>
-                <div class="bar">
-                  <div class="bar-fill fats"></div>
-                </div>
-              </div>
-            </div>
-            <div class="mini-stats-footer">
-              <span>Daily goal completion</span>
-              <span><strong>73%</strong> reached</span>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </main>
-
-    <section class="features" aria-label="Key features">
-      <h2>Why people use Zaza to manage their diet</h2>
-      <p>
-        Zaza helps you build awareness around what you’re eating, without
-        obsessing over every gram. Just talk to the bot, and it does the
-        boring tracking and summarizing for you.
-      </p>
-
-      <div class="feature-grid">
-        <article class="feature-card">
-          <div class="feature-icon">💬</div>
-          <h3>Simple chat-based logging</h3>
-          <p>
-            Type what you ate like you’d text a friend: “2 eggs, toast,
-            coffee.” Zaza parses the message, categorizes the meal and adds it
-            to your day automatically.
-          </p>
-        </article>
-
-        <article class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Daily & weekly stats reports</h3>
-          <p>
-            Ask “show my week” to see trends: average calories, macro balance,
-            meal timing and more. Zaza turns your logs into easy-to-skim
-            summaries.
-          </p>
-        </article>
-
-        <article class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <h3>Aligned with your goals</h3>
-          <p>
-            Tell Zaza if you’re trying to maintain, lose or gain weight. It’ll
-            highlight when you’re over target, under target or right on track.
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <section
-      class="steps"
-      id="how-it-works"
-      aria-label="How Zaza works in 3 steps"
-    >
-      <div class="steps-header">
-        <h2>Get started in under 1 minute</h2>
-        <span>No new app, no signup flow, no friction.</span>
-      </div>
-
-      <div class="steps-list">
-        <div class="step">
-          <div class="step-label">
-            <span class="step-number">1</span> Open the bot
-          </div>
-          <p>
-            Tap
-            <strong>“Open in Telegram”</strong>
-            or search for
-            <strong>@YourZazaBot</strong>
-            inside Telegram and hit <strong>Start</strong>.
-          </p>
-        </div>
-        <div class="step">
-          <div class="step-label">
-            <span class="step-number">2</span> Tell Zaza your goal
-          </div>
-          <p>
-            In a sentence, share your objective:
-            <strong>“I want to lose 4 kg”</strong> or
-            <strong>“I just want to eat cleaner.”</strong> Zaza will adapt your
-            stats around that.
-          </p>
-        </div>
-        <div class="step">
-          <div class="step-label">
-            <span class="step-number">3</span> Log & get stats
-          </div>
-          <p>
-            Log meals as you go. Whenever you’re curious, just ask:
-            <strong>“stats for today”</strong> or
-            <strong>“how was my week?”</strong> for instant reports.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      <span>© <span id="year"></span> Zaza · Telegram diet assistant</span>
-      <div class="footer-links">
-        <a href="mailto:hello@example.com">Contact</a>
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-      </div>
-    </footer>
+  <div class="feature-box">
+    <h3>🍎 Log meals in seconds</h3>
+    <p>No apps or spreadsheets — just tell the bot what you ate.</p>
   </div>
 
-  <script>
-    // Set current year in footer
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <div class="feature-box">
+    <h3>📊 Simple daily stats</h3>
+    <p>Ask for your “stats” anytime to see calories, macros, and more.</p>
+  </div>
+
+  <div class="feature-box">
+    <h3>🎯 Personalized to your goals</h3>
+    <p>Whether you're losing, maintaining, or gaining, it adapts to you.</p>
+  </div>
+
+</div>
+
+<footer>© <script>document.write(new Date().getFullYear())</script> My Diet Assistant</footer>
+
 </body>
 </html>
